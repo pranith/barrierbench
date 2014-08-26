@@ -5,10 +5,10 @@
 #include <stdio.h>
 #include <pthread.h>
 
-#define USE_BARRIER 1
+#define USE_BARRIER 0
 #include "barrier.h"
 
-int victim, r1, r2, counter;
+volatile int victim, r1, r2, counter;
 
 void *thread1(void *arg)
 {
@@ -29,7 +29,7 @@ void *thread2(void *arg)
 	r2 = 1;
 	victim = 2;
 	barrier();
-	while(victim == 1 && r1);
+	while(victim == 2 && r1);
 
 	counter++; // CS
 	r2 = 0;
