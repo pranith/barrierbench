@@ -1,10 +1,12 @@
 ifneq (DEBUG, "-g")
 	DEBUG += -O2
+else
+	DEBUG += -Wa,-adhln
 endif
 CC=gcc
 CXX=g++
 CFLAGS = -std=gnu99 -lpthread -Wall $(DEBUG) 
-LDFLAGS = -std=gnu99 
+LDFLAGS = -std=gnu99  $(DEBUG)
 CXXFLAGS = -std=g++11
 OUT = peterson
 OBJ = peterson.o 
@@ -23,6 +25,11 @@ $(OUT): $(OBJ)
 
 debug: clean
 	$(MAKE) $(MAKEFILE) all DEBUG="-g"
+
+.PHONY: lst
+
+lst: clean
+	$(MAKE) $(MAKEFILE) all DEBUG="-Wa,-adhln -g" > file.lst
 
 .PHONY: clean
 
