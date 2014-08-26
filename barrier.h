@@ -17,9 +17,9 @@
 
 #else /* USE_BARRIER */
 
-#define read_barrier() 
-#define write_barrier() 
-#define barrier() 
+#define read_barrier() do {} while(0)
+#define write_barrier() do {} while(0)
+#define barrier() do {} while(0)
 
 #endif /* USER_BARRIER */
 
