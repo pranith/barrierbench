@@ -12,28 +12,32 @@ volatile int victim, r1, r2, counter;
 
 void *thread1(void *arg)
 {
-	r1 = 1;
-	victim = 1;
-	barrier();
-	while(victim == 1 && r2);
+	for (int i = 0; i < 2000000; i++) {
+		r1 = 1;    	// lock
+		victim = 1;
+		barrier();
+		while(victim == 1 && r2);
 
-	counter++; // CS
-	r1 = 0;
-	write_barrier();
+		counter++; 	// CS
+		r1 = 0;		// unlock
+		barrier();
+	}
 
 	return NULL;
 }
 
 void *thread2(void *arg)
 {
-	r2 = 1;
-	victim = 2;
-	barrier();
-	while(victim == 2 && r1);
+	for (int i = 0; i < 2000000; i++) {
+		r2 = 1;		// lock
+		victim = 2;
+		barrier();
+		while(victim == 2 && r1);
 
-	counter++; // CS
-	r2 = 0;
-	write_barrier();
+		counter++; 	// CS
+		r2 = 0;		// unlock
+		barrier();
+	}
 
 	return NULL;
 }
@@ -42,14 +46,12 @@ int main()
 {
 	pthread_t tid1, tid2;
 
-	for (int i = 0; i < 1000000; i++) {
-		pthread_create(&tid1, NULL, thread1, NULL);
-		pthread_create(&tid2, NULL, thread2, NULL);
+	pthread_create(&tid1, NULL, thread1, NULL);
+	pthread_create(&tid2, NULL, thread2, NULL);
 
-		pthread_join(tid1, NULL);
-		pthread_join(tid2, NULL);
-	}
-
+	pthread_join(tid1, NULL);
+	pthread_join(tid2, NULL);
+	barrier();
 	printf("counter is %d\n", counter);
 
 	return 0;
