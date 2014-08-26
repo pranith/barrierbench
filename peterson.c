@@ -8,11 +8,13 @@
 #define USE_BARRIER 0
 #include "barrier.h"
 
-volatile int victim, r1, r2, counter;
+volatile int victim, r1, r2;
+volatile unsigned long counter;
+unsigned long iter = 100000000;
 
 void *thread1(void *arg)
 {
-	for (int i = 0; i < 2000000; i++) {
+	for (unsigned long i = 0; i < iter; i++) {
 		r1 = 1;    	// lock
 		victim = 1;
 		barrier();
@@ -28,7 +30,7 @@ void *thread1(void *arg)
 
 void *thread2(void *arg)
 {
-	for (int i = 0; i < 2000000; i++) {
+	for (unsigned long i = 0; i < iter; i++) {
 		r2 = 1;		// lock
 		victim = 2;
 		barrier();
@@ -52,7 +54,7 @@ int main()
 	pthread_join(tid1, NULL);
 	pthread_join(tid2, NULL);
 	barrier();
-	printf("counter is %d\n", counter);
+	printf("counter is %lu\n", counter);
 
 	return 0;
 }
