@@ -5,8 +5,8 @@ else
 endif
 CC=gcc
 CXX=g++
-CFLAGS = -std=gnu99 -lpthread -lrt -Wall $(DEBUG)
-LDFLAGS = -std=gnu99  $(DEBUG)
+CFLAGS = -std=gnu11 -lpthread -lrt -Wall $(DEBUG)
+LDFLAGS = -std=gnu11 $(DEBUG)
 CXXFLAGS = -std=g++11
 OUT = peterson
 OBJ = peterson.o 
