@@ -21,6 +21,6 @@
 #define write_barrier() do {} while(0)
 #define barrier() do {} while(0)
 
-#endif /* USER_BARRIER */
+#endif /* USE_BARRIER */
 
 #endif /* _BARRIER_H_ */

@@ -48,7 +48,11 @@ void *thread2(void *arg)
 int main()
 {
 	pthread_t tid1, tid2;
-	struct timeval before, after;
+	struct timespec before, after;
+	clockid_t cid;
+
+	if (clock_getcpuclockid(0, &cid))
+		fprintf(stderr, "unreliable clock source\n");
 
 	for (int i = 0; i < 20; i++) {
 		counter = 0;

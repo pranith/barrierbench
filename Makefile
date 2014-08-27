@@ -5,7 +5,7 @@ else
 endif
 CC=gcc
 CXX=g++
-CFLAGS = -std=gnu99 -lpthread -Wall $(DEBUG) 
+CFLAGS = -std=gnu99 -lpthread -lrt -Wall $(DEBUG)
 LDFLAGS = -std=gnu99  $(DEBUG)
 CXXFLAGS = -std=g++11
 OUT = peterson
