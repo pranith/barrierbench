@@ -6,6 +6,9 @@
 #define _BARRIER_H_
 
 #if USE_BARRIER
+
+#if defined(__i386__) || defined(__x86_64__)
+
 #define read_barrier() \
 	asm volatile("lfence":::"memory")
 
@@ -14,6 +17,19 @@
 
 #define barrier() \
 	asm volatile ("mfence":::"memory")
+
+#elif defined(__arm__)
+
+#define read_barrier() \
+	asm volatile("dmb":::"memory")
+
+#define write_barrier() \
+	asm volatile("dmb ishst" :::"memory")
+
+#define barrier() \
+	asm volatile ("dmb ish" :::"memory")
+
+#endif /* ARCH */
 
 #else /* USE_BARRIER */
 
