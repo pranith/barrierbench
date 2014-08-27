@@ -7,6 +7,7 @@
 
 #define USE_BARRIER 0
 #include "barrier.h"
+#include "timer.h"
 
 volatile int victim, r1, r2;
 volatile unsigned long counter;
@@ -47,14 +48,20 @@ void *thread2(void *arg)
 int main()
 {
 	pthread_t tid1, tid2;
+	struct timeval before, after;
 
-	pthread_create(&tid1, NULL, thread1, NULL);
-	pthread_create(&tid2, NULL, thread2, NULL);
+	for (int i = 0; i < 20; i++) {
+		counter = 0;
+		start_watch(&before);
+		pthread_create(&tid1, NULL, thread1, NULL);
+		pthread_create(&tid2, NULL, thread2, NULL);
 
-	pthread_join(tid1, NULL);
-	pthread_join(tid2, NULL);
-	barrier();
-	printf("counter is %lu\n", counter);
+		pthread_join(tid1, NULL);
+		pthread_join(tid2, NULL);
+		stop_watch(&after);
+		barrier();
+		printf("counter is %lu, time: %ld\n", counter, get_timer_diff(&before, &after));
+	}
 
 	return 0;
 }
