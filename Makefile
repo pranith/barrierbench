@@ -8,15 +8,20 @@ CXX=g++
 CFLAGS = -std=gnu11 -lpthread -lrt -Wall $(DEBUG)
 LDFLAGS = -std=gnu11 $(DEBUG)
 CXXFLAGS = -std=g++11
-OUT = peterson
-OBJ = peterson.o 
+OUT1 = peterson
+OBJ1 = peterson.o
+OUT2 = peterson_c11
+OBJ2 = peterson_c11.o
 
-all: $(OUT)
+all: $(OUT1) $(OUT2)
 
 .PHONY: all
 
-$(OUT): $(OBJ)
-	$(CC) $(OBJ) -o $@ $(CFLAGS)
+$(OUT1): $(OBJ1)
+	$(CC) $(OBJ1) -o $@ $(CFLAGS)
+
+$(OUT2): $(OBJ2)
+	$(CC) $(OBJ2) -o $@ $(CFLAGS)
 
 %.o : %.cc %.h
 	$(CC) -o $@ -c $< $(CFLAGS)
