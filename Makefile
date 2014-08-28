@@ -39,4 +39,4 @@ lst: clean
 .PHONY: clean
 
 clean:
-	rm -f *.o *~ peterson *.lst
+	rm -f *.o *~ peterson peterson_c11 *.lst
