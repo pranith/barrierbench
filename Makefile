@@ -12,6 +12,8 @@ OUT1 = peterson
 OBJ1 = peterson.o
 OUT2 = peterson_c11
 OBJ2 = peterson_c11.o
+OUT3 = relaxed
+OBJ3 = peterson_relaxed.o
 
 all: $(OUT1) $(OUT2)
 
@@ -22,6 +24,9 @@ $(OUT1): $(OBJ1)
 
 $(OUT2): $(OBJ2)
 	$(CC) $(OBJ2) -o $@ $(CFLAGS)
+
+$(OUT3): $(OBJ3)
+	$(CC) $(OBJ3) -o $@ $(CFLAGS)
 
 %.o : %.cc %.h
 	$(CC) -o $@ -c $< $(CFLAGS)
@@ -39,4 +44,4 @@ lst: clean
 .PHONY: clean
 
 clean:
-	rm -f *.o *~ peterson peterson_c11 *.lst
+	rm -f *.o *~ relaxed peterson peterson_c11 *.lst
