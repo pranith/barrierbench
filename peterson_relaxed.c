@@ -10,7 +10,7 @@
 
 atomic_int victim, r1, r2, wait;
 volatile unsigned long counter;
-unsigned long iter = 100000000;
+unsigned long iter = 200000000;
 
 void *thread1(void *arg)
 {

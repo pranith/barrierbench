@@ -15,7 +15,7 @@ OBJ2 = peterson_c11.o
 OUT3 = relaxed
 OBJ3 = peterson_relaxed.o
 
-all: $(OUT1) $(OUT2)
+all: $(OUT1) $(OUT2) $(OUT3)
 
 .PHONY: all
 
