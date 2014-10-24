@@ -5,28 +5,36 @@
 #define KB(x) ((x) << 10)
 #define MB(x) ((x) << 20)
 
+#define NUM_ACCESSES_PER_ITER 400
+#define NUM_MISSES_PER_ITER 1
+#define MEM_SIZE 128
+
 int main(int argc, char *argv[])
 {
-	int i = 0, num_req = 1;
-	int cache_size = MB(64);
+	int i = 0, num_misses_per_iter = NUM_MISSES_PER_ITER;
+	int cache_size = MB(MEM_SIZE);
 	int max_index = cache_size / sizeof(long);
 	unsigned long j = 0;
-	int *indexarr = (int *)malloc(sizeof(int) * 400);
+	int *indexarr = (int *)malloc(sizeof(int) * NUM_ACCESSES_PER_ITER);
 
 	if (argc > 1)
-		num_req = atoi(argv[1]);
+		num_misses_per_iter = atoi(argv[1]);
 
-	if (num_req == 0)
+	if (num_misses_per_iter == 0)
 		return 0;
 
-	int period = 400 / num_req;
-	int offset = cache_size / (num_req * sizeof(long));
+	// increment index after every 'period' accesses
+	int period = NUM_ACCESSES_PER_ITER / num_misses_per_iter;
+
+	// increment index by offset for every 'period' accesses
+	int offset = cache_size / (num_misses_per_iter * sizeof(long));
 
 	int ind = 0;
-	for (j = 0; j < 400; j++)
+	for (j = 0; j < NUM_ACCESSES_PER_ITER; j++)
 	{
-		//indexarr[j] = /*(num_req * j) / 50 +*/ (num_req * j * offset) / 400;
+		//indexarr[j] = /*(num_misses_per_iter * j) / 50 +*/ (num_misses_per_iter * j * offset) / num_misses_per_iter;
 		indexarr[j] = ind;
+		i++;
 		if (i >= period)
 		{
 			i = 0;
@@ -34,13 +42,12 @@ int main(int argc, char *argv[])
 			if (ind > max_index)
 				ind -= offset;
 		}
-		i++;
 	}
 
-	for (i = 0; i < 400; i++)
+	for (i = 0; i < NUM_ACCESSES_PER_ITER; i++)
 		printf("dest = src[i + %d];\n", indexarr[i]);
 
-	printf("#define indexarr399 %d\n", indexarr[399]);
+	printf("#define lastindex %d\n", indexarr[NUM_ACCESSES_PER_ITER-1]);
 
 	return 0;
 }
