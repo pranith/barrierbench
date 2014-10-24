@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
 	}
 
 	for (i = 0; i < 400; i++)
-		printf("src[i + %d] = dest;\n", indexarr[i]);
+		printf("dest = src[i + %d];\n", indexarr[i]);
 
 	printf("#define indexarr399 %d\n", indexarr[399]);
 
