@@ -7,12 +7,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define USE_BARRIER 0
+#define USE_BARRIER 1
 #include "../barrier.h"
 #include "../timer.h"
 
 #define MEM_SIZE 128
-#define NUM_ACCESSES_PER_ITER 400
+#define NUM_ACCESSES_PER_ITER 1024
 
 long *src;
 long result;
@@ -62,10 +62,10 @@ int main(int argc, char* argv[])
   }
   stop_watch(&after);
 
-  printf("cache accesses %ld, cache misses %ld\n", num_iter * NUM_ACCESSES_PER_ITER, num_iter * num_req);
+  //printf("cache accesses %ld, cache misses %ld\n", num_iter * NUM_ACCESSES_PER_ITER, num_iter * num_req);
   printf("%lu, ", num_iter * num_req * repeat);
   printf("%d, %ld\n", num_req, get_timer_diff(&before, &after));
-  fprintf(stderr, "%ld\n", dest);
+  //fprintf(stderr, "%ld\n", dest);
 
   fflush(NULL);
   return 0;

@@ -5,7 +5,7 @@
 #define KB(x) ((x) << 10)
 #define MB(x) ((x) << 20)
 
-#define NUM_ACCESSES_PER_ITER 400
+#define NUM_ACCESSES_PER_ITER 1024
 #define NUM_MISSES_PER_ITER 1
 #define MEM_SIZE 128
 
@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
 		{
 			i = 0;
 			ind += offset;
-			if (ind > max_index)
+			if (ind >= max_index)
 				ind -= offset;
 		}
 	}
