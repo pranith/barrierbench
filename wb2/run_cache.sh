@@ -3,6 +3,7 @@
 # arg=$*
 
 rm -f nobarrier.txt barrier.txt
+rm -f results.txt
 make gen_define.exe
 for ((arg = 1; arg <= 1024; arg = arg * 2))
 do

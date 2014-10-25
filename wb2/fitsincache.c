@@ -47,8 +47,10 @@ int main(int argc, char* argv[])
   struct timespec before, after;
 
 
-  start_watch(&before);
-  for (repeat = 0; repeat < 1; repeat++) {
+  int max_repeat = 3;
+  printf("%lu,%d,", num_iter * num_req,num_req);
+  for (repeat = 0; repeat < max_repeat; repeat++) {
+	  start_watch(&before);
 	  for(j = 0; j < num_iter; j++)
 	  {
 		  #include "defines.h"
@@ -60,12 +62,12 @@ int main(int argc, char* argv[])
 		  if (i + lastindex > max_index)
 			  i = 0;
 	  }
+	  stop_watch(&after);
+	  printf("%ld,", get_timer_diff(&before, &after));
   }
-  stop_watch(&after);
+  printf("\n");
 
   //printf("cache accesses %ld, cache misses %ld\n", num_iter * NUM_ACCESSES_PER_ITER, num_iter * num_req);
-  printf("%lu,", num_iter * num_req * repeat);
-  printf("\t\t%d,\t\t%ld\n", num_req, get_timer_diff(&before, &after));
   //fprintf(stderr, "%ld\n", dest);
 
   fflush(NULL);
