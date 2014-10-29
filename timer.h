@@ -2,7 +2,7 @@
 
 #define DEBUG 0
 
-unsigned long get_timer_nsec(struct timespec *timer)
+unsigned long long get_timer_nsec(struct timespec *timer)
 {
 	return timer->tv_sec * 1E6 + timer->tv_nsec / 1000;
 }
@@ -18,7 +18,7 @@ void start_watch(struct timespec *timer)
 		fprintf(stderr, "startWatch failed\n");
 
 #if DEBUG
-	printf("time val is %lu\n", get_timer_nsec(timer));
+	printf("time val is %llu\n", get_timer_nsec(timer));
 #endif
 }
 
