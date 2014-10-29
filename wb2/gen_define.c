@@ -1,13 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define CACHE_LINE_SIZE 64
-#define KB(x) ((x) << 10)
-#define MB(x) ((x) << 20)
+#include "common.h"
 
-#define NUM_ACCESSES_PER_ITER 1024
-#define NUM_MISSES_PER_ITER 1
-#define MEM_SIZE 128
+#define CACHE_LINE_SIZE 64
 
 int main(int argc, char *argv[])
 {
