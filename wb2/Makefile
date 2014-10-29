@@ -12,10 +12,10 @@ all: $(EXEC)
 
 .PHONY: all 
 
-$(EXEC): %.exe : %.o defines.h
+$(EXEC): %.exe : %.o defines.h common.h
 		  $(CC) $< -o $@ $(CPPFLAGS) 
 
-$(OBJ): %.o : %.cpp 
+$(OBJ): %.o : %.cpp %.h
 		  $(CC) -o $@ -c $< $(CPPFLAGS)
 
 .PHONY: debug
