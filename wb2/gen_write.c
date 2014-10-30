@@ -1,17 +1,38 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 #include "common.h"
 
-#define CACHE_LINE_SIZE 64
+void generate_randindices(int *randindices)
+{
+	int i = 0;
+	for (i = 0; i < NUM_ACCESSES_PER_ITER; i++)
+		randindices[i] = -1;
+
+	srandom(time(NULL));
+
+	i = 0;
+	while(i != NUM_ACCESSES_PER_ITER) {
+		int rand_index = random() % NUM_ACCESSES_PER_ITER;
+		if (randindices[rand_index] == -1) {
+			randindices[rand_index] = i;
+			i++;
+		}
+	}
+
+	return;
+}
 
 int main(int argc, char *argv[])
 {
 	int i = 0, num_misses_per_iter = NUM_MISSES_PER_ITER;
 	int cache_size = MB(MEM_SIZE);
+	int num_cache_lines = cache_size / CACHE_LINE_SIZE;
 	int max_index = cache_size / sizeof(long);
 	unsigned long j = 0;
 	int *indexarr = (int *)malloc(sizeof(int) * NUM_ACCESSES_PER_ITER);
+	int *randindices = (int *)malloc(sizeof(int) * NUM_ACCESSES_PER_ITER);
 
 	if (argc > 1)
 		num_misses_per_iter = atoi(argv[1]);
@@ -23,7 +44,8 @@ int main(int argc, char *argv[])
 	int period = NUM_ACCESSES_PER_ITER / num_misses_per_iter;
 
 	// increment index by offset for every 'period' accesses
-	int offset = cache_size / (num_misses_per_iter * sizeof(long));
+	int offset = 2 * CACHE_LINE_SIZE / sizeof(long); //cache_size / (num_misses_per_iter * sizeof(long));
+	int max_offset = NUM_ACCESSES_PER_ITER * 2 * CACHE_LINE_SIZE / sizeof(long);
 
 	int ind = 0;
 	for (j = 0; j < NUM_ACCESSES_PER_ITER; j++)
@@ -35,15 +57,16 @@ int main(int argc, char *argv[])
 		{
 			i = 0;
 			ind += offset;
-			if (ind >= max_index)
+			if (ind >= max_offset)
 				ind -= offset;
 		}
 	}
 
-	for (i = 0; i < NUM_ACCESSES_PER_ITER; i++)
-		printf("src[i + %d] = dest;\n", indexarr[i]);
+	// shuffle indices
+	generate_randindices(randindices);
 
-	printf("#define lastindex %d\n", indexarr[NUM_ACCESSES_PER_ITER-1]);
+	for (i = 0; i < NUM_ACCESSES_PER_ITER; i++)
+		printf("src[i + %d] = dest;\n", indexarr[randindices[i]]);
 
 	return 0;
 }

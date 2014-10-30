@@ -7,7 +7,7 @@ CC = gcc
 CFLAGS = -Wall $(DEBUG) -I$(IDIR) -lrt
 LDFLAGS = -lrt
 
-EXEC = gen_define.exe fitsincache.exe
+EXEC = gen_define.exe fitsincache.exe gen_write.exe
 
 all: $(EXEC)
 

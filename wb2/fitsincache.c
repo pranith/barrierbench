@@ -15,6 +15,7 @@
 long *src;
 long result;
 unsigned long max_index;
+volatile long dest = 16;
 
 #define KB(x) ((x) << 10)
 #define MB(x) ((x) << 20)
@@ -25,8 +26,10 @@ void warmup()
   max_index = MB(MEM_SIZE) / sizeof(long);
   src = (long *)malloc(sizeof(long) * max_index);
   //initialize array
+  /*
   for (j = 0; j < max_index; j++)
     src[j] = 16;
+    */
 }
 
 
@@ -34,8 +37,9 @@ int main(int argc, char* argv[])
 {
   warmup();
   unsigned long j, i = 0;
-  volatile long dest = 0;
   int num_req = 0;
+  int mem_region_size = NUM_ACCESSES_PER_ITER * CACHE_LINE_SIZE * 2;
+  int iter_offset = mem_region_size / sizeof(long);
 
   if (argc > 1)
 	  num_req = atoi(argv[1]);
@@ -43,8 +47,7 @@ int main(int argc, char* argv[])
   unsigned long repeat, num_iter = NUM_ITER;
   struct timespec before, after;
 
-
-  int max_repeat = 3;
+  int max_repeat = 1;
   printf("%lu,%d,", num_iter * num_req,num_req);
   for (repeat = 0; repeat < max_repeat; repeat++) {
 	  start_watch(&before);
@@ -54,9 +57,9 @@ int main(int argc, char* argv[])
 		  // flush write buffer
 		  barrier();
 
-		  i += 32 + dest;
+		  i += iter_offset;
 
-		  if (i + lastindex > max_index)
+		  if (i + iter_offset > max_index)
 			  i = 0;
 	  }
 	  stop_watch(&after);
