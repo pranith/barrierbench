@@ -40,14 +40,17 @@ int main(int argc, char* argv[])
   int num_req = 0;
   int mem_region_size = NUM_ACCESSES_PER_ITER * CACHE_LINE_SIZE * 2;
   int iter_offset = mem_region_size / sizeof(long);
+  int max_repeat = 1;
 
   if (argc > 1)
 	  num_req = atoi(argv[1]);
+  if (argc > 2)
+	  max_repeat = atoi(argv[2]);
+
 
   unsigned long repeat, num_iter = NUM_ITER;
   struct timespec before, after;
 
-  int max_repeat = 1;
   printf("%lu,%d,", num_iter * num_req,num_req);
   for (repeat = 0; repeat < max_repeat; repeat++) {
 	  start_watch(&before);

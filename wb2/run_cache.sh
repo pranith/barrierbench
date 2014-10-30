@@ -2,18 +2,23 @@
 
 # arg=$*
 
+repeat=3
 rm -f nobarrier.txt barrier.txt
 rm -f results.txt
-make gen_define.exe
-for ((arg = 1; arg <= 1024; arg = arg * 2))
+make gen_write.exe
+for ((i = 0; arg <= 128; i = i + 1))
 do
-    	./gen_define.exe $arg > defines.h
+	let arg=$i*2;
+	if(("$arg" == "0")); then 
+		arg=1; 
+	fi
+    	./gen_write.exe $arg > defines.h
 	rm -f fitsincache.o fitsincache.exe
    	make >& /dev/null
-	./fitsincache.exe $arg | tee -a nobarrier.txt
+	./fitsincache.exe $arg $repeat | tee -a nobarrier.txt
 	rm -f fitsincache.o fitsincache.exe
 	make CPPFLAGS=-DUSE_BARRIER >& /dev/null
-	./fitsincache.exe $arg | tee -a barrier.txt
+	./fitsincache.exe $arg $repeat | tee -a barrier.txt
 done
 
 cat barrier.txt >> results.txt
