@@ -5,7 +5,10 @@
 #include <stdio.h>
 #include <pthread.h>
 
-#define USE_BARRIER 0
+#define USE_BARRIER 1
+
+#define TIMES 1
+
 #include "barrier.h"
 #include "timer.h"
 
@@ -56,7 +59,7 @@ int main()
 	if (clock_getcpuclockid(0, &cid))
 		fprintf(stderr, "unreliable clock source\n");
 
-	for (int i = 0; i < 20; i++) {
+	for (int i = 0; i < TIMES; i++) {
 		counter1 = 0;
 		counter2 = 0;
 		start_watch(&before);

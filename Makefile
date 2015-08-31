@@ -1,13 +1,13 @@
 ifneq (DEBUG, "-g")
-	DEBUG += -O2
+	DEBUG += -O1
 else
 	DEBUG += -Wa,-adhln
 endif
 CC=gcc
 CXX=g++
-CFLAGS = -std=gnu11 -lpthread -lrt -Wall $(DEBUG)
+CFLAGS = -ggdb -std=gnu11 -lpthread -lrt -Wall $(DEBUG)
 LDFLAGS = -std=gnu11 $(DEBUG)
-CXXFLAGS = -std=g++11
+CXXFLAGS = -ggdb -std=g++11
 OUT1 = peterson
 OBJ1 = peterson.o
 OUT2 = peterson_c11

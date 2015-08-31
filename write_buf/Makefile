@@ -4,7 +4,7 @@ endif
 
 IDIR = ../include
 CC = gcc
-CPPFLAGS = -Wall $(DEBUG) -I$(IDIR)
+CPPFLAGS = -ggdb -Wall $(DEBUG) -I$(IDIR)
 
 EXEC = gen_define.exe fitsincache.exe
 
