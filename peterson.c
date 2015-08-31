@@ -10,7 +10,7 @@
 #include "timer.h"
 
 volatile int victim, r1, r2, wait;
-volatile unsigned long counter;
+volatile unsigned long counter1, counter2;
 unsigned long iter = 100000000;
 
 void *thread1(void *arg)
@@ -22,7 +22,7 @@ void *thread1(void *arg)
 		barrier();
 		while(victim == 1 && r2);
 
-		counter++; 	// CS
+		counter1++; 	// CS
 		r1 = 0;		// unlock
 		barrier();
 	}
@@ -39,7 +39,7 @@ void *thread2(void *arg)
 		barrier();
 		while(victim == 2 && r1);
 
-		counter++; 	// CS
+		counter2++; 	// CS
 		r2 = 0;		// unlock
 		barrier();
 	}
@@ -57,7 +57,8 @@ int main()
 		fprintf(stderr, "unreliable clock source\n");
 
 	for (int i = 0; i < 20; i++) {
-		counter = 0;
+		counter1 = 0;
+		counter2 = 0;
 		start_watch(&before);
 		pthread_create(&tid1, NULL, thread1, NULL);
 		pthread_create(&tid2, NULL, thread2, NULL);
@@ -67,7 +68,7 @@ int main()
 		pthread_join(tid2, NULL);
 		stop_watch(&after);
 		barrier();
-		printf("counter is %lu, time: %ld\n", counter, get_timer_diff(&before, &after));
+		printf("counter is %lu, time: %ld\n", counter1 + counter2, get_timer_diff(&before, &after));
 	}
 
 	return 0;

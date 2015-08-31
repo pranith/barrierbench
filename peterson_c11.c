@@ -17,11 +17,11 @@ void *thread1(void *arg)
 	while(wait == 0);
 	for (unsigned long i = 0; i < iter; i++) {
 		r1 = 1;    	// lock
-		victim = 1;
-		while(victim == 1 && r2);
-
+		atomic_store_explicit(&r1, 1, memory_order_seq_cst);
+		atomic_store_explicit(&victim, 1, memory_order_seq_cst);
+		while(atomic_load_explicit(&victim, memory_order_seq_cst) == 1 && atomic_load_explicit(&r2, memory_order_seq_cst) == 1);
 		counter++; 	// CS
-		r1 = 0;		// unlock
+		atomic_store_explicit(&r1, 0, memory_order_seq_cst);		// unlock
 	}
 
 	return NULL;
@@ -31,12 +31,11 @@ void *thread2(void *arg)
 {
 	while(wait == 0);
 	for (unsigned long i = 0; i < iter; i++) {
-		r2 = 1;		// lock
-		victim = 2;
-		while(victim == 2 && r1);
-
+		atomic_store_explicit(&r2, 1, memory_order_seq_cst);
+		atomic_store_explicit(&victim, 2, memory_order_seq_cst);
+		while(atomic_load_explicit(&victim, memory_order_seq_cst) == 2 && atomic_load_explicit(&r1, memory_order_seq_cst) == 1);
 		counter++; 	// CS
-		r2 = 0;		// unlock
+		atomic_store_explicit(&r2, 0, memory_order_seq_cst);		// unlock
 	}
 
 	return NULL;
