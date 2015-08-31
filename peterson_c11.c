@@ -9,7 +9,7 @@
 #include "timer.h"
 
 atomic_int victim, r1, r2, wait;
-volatile unsigned long counter;
+volatile unsigned long counter1, counter2;
 unsigned long iter = 100000000;
 
 void *thread1(void *arg)
@@ -20,7 +20,7 @@ void *thread1(void *arg)
 		atomic_store_explicit(&r1, 1, memory_order_seq_cst);
 		atomic_store_explicit(&victim, 1, memory_order_seq_cst);
 		while(atomic_load_explicit(&victim, memory_order_seq_cst) == 1 && atomic_load_explicit(&r2, memory_order_seq_cst) == 1);
-		counter++; 	// CS
+		counter1++; 	// CS
 		atomic_store_explicit(&r1, 0, memory_order_seq_cst);		// unlock
 	}
 
@@ -34,7 +34,7 @@ void *thread2(void *arg)
 		atomic_store_explicit(&r2, 1, memory_order_seq_cst);
 		atomic_store_explicit(&victim, 2, memory_order_seq_cst);
 		while(atomic_load_explicit(&victim, memory_order_seq_cst) == 2 && atomic_load_explicit(&r1, memory_order_seq_cst) == 1);
-		counter++; 	// CS
+		counter2++; 	// CS
 		atomic_store_explicit(&r2, 0, memory_order_seq_cst);		// unlock
 	}
 
@@ -51,7 +51,8 @@ int main()
 		fprintf(stderr, "unreliable clock source\n");
 
 	for (int i = 0; i < 20; i++) {
-		counter = 0;
+		counter1 = 0;
+		counter2 = 0;
 		start_watch(&before);
 		pthread_create(&tid1, NULL, thread1, NULL);
 		pthread_create(&tid2, NULL, thread2, NULL);
@@ -60,7 +61,7 @@ int main()
 		pthread_join(tid1, NULL);
 		pthread_join(tid2, NULL);
 		stop_watch(&after);
-		printf("counter is %lu, time: %ld\n", counter, get_timer_diff(&before, &after));
+		printf("counter is %lu, time: %ld\n", counter1+counter2, get_timer_diff(&before, &after));
 	}
 
 	return 0;
