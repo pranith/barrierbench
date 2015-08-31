@@ -57,7 +57,7 @@ int main()
 		pthread_create(&tid1, NULL, thread1, NULL);
 		pthread_create(&tid2, NULL, thread2, NULL);
 
-		wait = 1;
+		atomic_store_explicit(&wait, 1, memory_order_release);
 		pthread_join(tid1, NULL);
 		pthread_join(tid2, NULL);
 		stop_watch(&after);
