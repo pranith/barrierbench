@@ -19,7 +19,9 @@ void *thread1(void *arg)
 		r1 = 1;    	// lock
 		atomic_store_explicit(&r1, 1, memory_order_seq_cst);
 		atomic_store_explicit(&victim, 1, memory_order_seq_cst);
-		while(atomic_load_explicit(&victim, memory_order_seq_cst) == 1 && atomic_load_explicit(&r2, memory_order_seq_cst) == 1);
+                while(atomic_load_explicit(&victim, memory_order_seq_cst) == 1
+                        && atomic_load_explicit(&r2, memory_order_seq_cst) == 1);
+
 		counter1++; 	// CS
 		atomic_store_explicit(&r1, 0, memory_order_seq_cst);		// unlock
 	}
