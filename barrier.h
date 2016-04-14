@@ -25,7 +25,17 @@ void flush_cl(void *addr)
 #define barrier() \
 	asm volatile ("mfence":::"memory")
 
+static inline void flush(void *addr)
+{
+  asm volatile("clflush  (%0)" :: "r"(addr));
+}
+
 #elif defined(__arm__) || defined(__aarch64__)
+
+static inline void flush(void *addr)
+{
+  asm volatile("dc cvac, (%0)" :: "r"(addr));
+}
 
 #define read_barrier() \
 	asm volatile("dmb":::"memory")

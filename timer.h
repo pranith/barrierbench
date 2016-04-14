@@ -14,7 +14,7 @@ long get_timer_diff(struct timespec *before, struct timespec *after)
 
 void start_watch(struct timespec *timer)
 {
-	if (clock_gettime(CLOCK_MONOTONIC, timer))
+	if (clock_gettime(CLOCK_PROCESS_CPUTIME_ID, timer))
 		fprintf(stderr, "startWatch failed\n");
 
 #if DEBUG
