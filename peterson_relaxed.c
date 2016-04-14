@@ -9,19 +9,19 @@
 #include "timer.h"
 
 atomic_int victim, r1, r2, wait;
-volatile unsigned long counter1, counter2;
-unsigned long iter = 100000000;
+volatile unsigned long counter1, counter2, counter;
+unsigned long iter = 1000000;
 
 void *thread1(void *arg)
 {
-	while(atomic_load_explicit(&wait, memory_order_acquire) == 0);
+	while(atomic_load_explicit(&wait, memory_order_relaxed) == 0);
 	for (unsigned long i = 0; i < iter; i++) {
-		atomic_exchange_explicit(&r1, 1, memory_order_acq_rel);    	// lock
-		atomic_exchange_explicit(&victim, 1, memory_order_acq_rel);
-		while(atomic_load_explicit(&victim, memory_order_acquire) == 1 
-				&& atomic_load_explicit(&r2, memory_order_acquire));
+		atomic_exchange_explicit(&r1, 1, memory_order_relaxed);    	// lock
+		atomic_exchange_explicit(&victim, 1, memory_order_relaxed);
+		while(atomic_load_explicit(&victim, memory_order_relaxed) == 1 
+				&& atomic_load_explicit(&r2, memory_order_relaxed));
 
-		counter1++; 	// CS
+		counter++; 	// CS
 		atomic_store_explicit(&r1, 0, memory_order_release);
 	}
 
@@ -30,14 +30,14 @@ void *thread1(void *arg)
 
 void *thread2(void *arg)
 {
-	while(atomic_load_explicit(&wait, memory_order_acquire) == 0);
+	while(atomic_load_explicit(&wait, memory_order_relaxed) == 0);
 	for (unsigned long i = 0; i < iter; i++) {
-		atomic_exchange_explicit(&r2, 1, memory_order_acq_rel);    	// lock
-		atomic_exchange_explicit(&victim, 2, memory_order_acq_rel);
-		while(atomic_load_explicit(&victim, memory_order_acquire) == 2 
-				&& atomic_load_explicit(&r1, memory_order_acquire));
+		atomic_exchange_explicit(&r2, 1, memory_order_relaxed);    	// lock
+		atomic_exchange_explicit(&victim, 2, memory_order_relaxed);
+		while(atomic_load_explicit(&victim, memory_order_relaxed) == 2 
+				&& atomic_load_explicit(&r1, memory_order_relaxed));
 
-		counter2++; 	// CS
+		counter++; 	// CS
 		atomic_store_explicit(&r2, 0, memory_order_release);
 	}
 
@@ -56,11 +56,12 @@ int main()
 	for (int i = 0; i < 20; i++) {
 		counter1 = 0;
 		counter2 = 0;
+		counter  = 0;
 		start_watch(&before);
 		pthread_create(&tid1, NULL, thread1, NULL);
 		pthread_create(&tid2, NULL, thread2, NULL);
 
-		atomic_store_explicit(&wait, 1, memory_order_release);
+		atomic_store_explicit(&wait, 1, memory_order_relaxed);
 		pthread_join(tid1, NULL);
 		pthread_join(tid2, NULL);
 		stop_watch(&after);

@@ -4,7 +4,7 @@ endif
 
 IDIR = ../include
 CC = gcc
-CPPFLAGS = -ggdb -Wall $(DEBUG) -I$(IDIR)
+CPPFLAGS = -ggdb -O0 -Wall $(DEBUG) -I$(IDIR) -std=gnu11
 
 EXEC = gen_define.exe fitsincache.exe
 
@@ -15,7 +15,7 @@ all: $(EXEC)
 $(EXEC): %.exe : %.o defines.h
 		  $(CC) $< -o $@ $(CPPFLAGS) 
 
-$(OBJ): %.o : %.cpp 
+$(OBJ): %.o : %.cpp defines.h
 		  $(CC) -o $@ -c $< $(CPPFLAGS)
 
 .PHONY: debug

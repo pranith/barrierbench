@@ -5,7 +5,7 @@
 #define KB(x) ((x) << 10)
 #define MB(x) ((x) << 20)
 
-#define NUM_REQ 50
+#define NUM_REQ 64
 
 int main(int argc, char *argv[])
 {
@@ -39,8 +39,10 @@ int main(int argc, char *argv[])
 		i++;
 	}
 
-	for (i = 0; i < NUM_REQ; i++)
+	for (i = 0; i < NUM_REQ; i++) {
 		printf("src[i + %d] = dest;\n", indexarr[i]);
+		printf("myprintf\(\"Accessing %%lu\\n\", i + %d);\n", indexarr[i]); 
+	}
 
 	printf("#define indexarr%d %d\n", NUM_REQ - 1, indexarr[NUM_REQ - 1]);
 

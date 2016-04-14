@@ -3,6 +3,17 @@
  * Author: Pranith Kumar
  */
 
+#define ACC_DEBUG 1
+
+#if ACC_DEBUG
+#define myprintf(...) printf(__VA_ARGS__)
+#define NUM_ITER 1
+#define REPEAT 1
+#else
+#define myprintf(...) 
+#define NUM_ITER 10
+#define REPEAT 10
+#endif
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -14,40 +25,43 @@
 long *src;
 long result;
 unsigned long size;
+//unsigned long repeat, num_iter = NUM_ITER; //5000000016 / num_mem_ops;
 
 #define KB(x) ((x) << 10)
 #define MB(x) ((x) << 20)
 
-void warmup()
+void warmup(int val)
 {
-  unsigned long j;
+  unsigned long j, i;
+
   size = MB(64) / sizeof(long);
-  src = (long *)malloc(sizeof(long) * size);
+  if (!src)
+	  src = (long *)malloc(sizeof(long) * size);
+
   //initialize array
+  for (i = 0; i < 5; i++)
   for (j = 0; j < size; j++)
-    src[j] = 8;
+    src[j] = 8 * val;
 }
 
 
 int main(int argc, char* argv[])
 {
-  warmup();
+  warmup(0);
   unsigned long j, i = 0;
   volatile long dest = 0;
-  int num_mem_ops = 400;
   int num_req = 0;
 
   if (argc > 1)
 	  num_req = atoi(argv[1]);
 
-  unsigned long repeat, num_iter = 5000000000 / num_mem_ops;
   struct timespec before, after;
 
-  printf("%lu, ", num_iter * num_req * 5);
+  //printf("%lu, ", num_iter * num_req * 5);
 
-  start_watch(&before);
-  for (repeat = 0; repeat < 5; repeat++) {
-	  for(j = 0; j < num_iter; j++)
+  for (int repeat = 0; repeat < REPEAT; repeat++) {
+	  start_watch(&before);
+	  for(j = 0; j < NUM_ITER; j++)
 	  {
 		  #include "defines.h"
 		  // flush write buffer
@@ -55,13 +69,14 @@ int main(int argc, char* argv[])
 
 		  i += 8 + dest;
 
-		  if (i + indexarr399 > size)
+		  if (i + indexarr63 > size)
 			  i = 0;
 	  }
+	  stop_watch(&after);
+	  printf("%d, %ld\n", num_req, get_timer_diff(&before, &after));
+	  warmup(repeat);
   }
-  stop_watch(&after);
 
-  printf("%d, %ld\n", num_req, get_timer_diff(&before, &after));
 
   fflush(NULL);
   return 0;
