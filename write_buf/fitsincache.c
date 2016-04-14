@@ -3,7 +3,7 @@
  * Author: Pranith Kumar
  */
 
-#define ACC_DEBUG 1
+#define ACC_DEBUG 0
 
 #if ACC_DEBUG
 #define myprintf(...) printf(__VA_ARGS__)
@@ -11,8 +11,8 @@
 #define REPEAT 1
 #else
 #define myprintf(...) 
-#define NUM_ITER 10
-#define REPEAT 10
+#define NUM_ITER 10000
+#define REPEAT 3
 #endif
 
 #include <stdio.h>
@@ -69,7 +69,7 @@ int main(int argc, char* argv[])
 
 		  i += 8 + dest;
 
-		  if (i + indexarr63 > size)
+		  if (i + indexarr63 >= size)
 			  i = 0;
 	  }
 	  stop_watch(&after);
