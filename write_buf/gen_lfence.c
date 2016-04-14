@@ -72,10 +72,10 @@ int main(int argc, char *argv[])
 	generate_randindices(randindices);
 
 	for (i = 0; i < NUM_ACCESSES_PER_ITER; i++) {
-    fprintf(defines, "flush(src+i+%d);\n", indexarr[randindices[i]]);
+		//fprintf(defines, "flush(src+i+%d);\n", indexarr[randindices[i]]);
 		fprintf(defines, "src[i + %d] = dest;\n", indexarr[randindices[i]]);
-    fprintf(defines, "flush(src+i+%d);\n", indexarr[randindices[i]]);
-    fprintf(defines, "barrier();\n", indexarr[randindices[i]]);
+		fprintf(defines, "barrier();\n", indexarr[randindices[i]]);
+		fprintf(defines, "flush(src+i+%d);\n", indexarr[randindices[i]]);
 		fprintf(defines, "myprintf\(\"Accessing %%lu\\n\", i + %d);\n", indexarr[randindices[i]]); 
 	}
 	//fprintf(defines, "barrier();\n");

@@ -11,7 +11,7 @@
 #define REPEAT 1
 #else
 #define myprintf(...) 
-#define NUM_ITER 10000
+#define NUM_ITER 1000
 #define REPEAT 1
 #endif
 
@@ -75,21 +75,21 @@ int main(int argc, char* argv[])
   //printf("%lu, ", num_iter * num_req * 5);
 
   for (int repeat = 0; repeat < REPEAT; repeat++) {
-    flush_cache();
+	  flush_cache();
 	  for(j = 0; j < NUM_ITER; j++)
 	  {
-      start_watch(&before);
+		  start_watch(&before);
 		  #include "defines.h"
 		  // flush write buffer
-		  //barrier();
-      stop_watch(&after);
+		  barrier();
+		  stop_watch(&after);
 
 		  i += 8 + dest;
 
 		  if (i + indexarr63 >= size)
 			  i = 0;
 
-      timer += get_timer_diff(&before, &after);
+		  timer += get_timer_diff(&before, &after);
 	  }
 
     printf("%d, %ld\n", num_req, timer);
