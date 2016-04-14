@@ -70,9 +70,7 @@ int main(int argc, char *argv[])
 	generate_randindices(randindices);
 
 	for (i = 0; i < NUM_ACCESSES_PER_ITER; i++) {
-		fprintf(defines, "src[i + %d] = dest;\n", indexarr[randindices[i]]);
-		fprintf(defines, "flush_cl(src + i + %d);\n", indexarr[randindices[i]]);
-		fprintf(flush, "flush_cl(src + i + %d);\n", indexarr[randindices[i]]);
+		fprintf(defines, "read_barrier();\n");
 	}
 
 	fclose(defines);

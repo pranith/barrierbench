@@ -5,7 +5,14 @@
 #ifndef _BARRIER_H_
 #define _BARRIER_H_
 
-#if USE_BARRIER
+void flush_cl(void *addr)
+{
+#if defined(__i386__) || defined(__x86_64__)
+	asm volatile("clflush (%0)" :: "r"(addr));
+#endif
+}
+
+#ifdef USE_BARRIER
 
 #if defined(__i386__) || defined(__x86_64__)
 
@@ -33,9 +40,11 @@
 
 #else /* USE_BARRIER */
 
-#define read_barrier() do {} while(0)
+#define read_barrier() \
+	asm volatile("mfence":::"memory")
 #define write_barrier() do {} while(0)
-#define barrier() do {} while(0)
+#define barrier() \
+	asm volatile("sfence":::"memory")
 
 #endif /* USE_BARRIER */
 

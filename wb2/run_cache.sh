@@ -2,17 +2,14 @@
 
 # arg=$*
 
-repeat=3
+repeat=5
 rm -f nobarrier.txt barrier.txt
 rm -f results.txt
+make clean
 make gen_write.exe
-for ((i = 0; arg <= 128; i = i + 1))
+for ((arg = 1; arg <= 64; arg = arg + 1))
 do
-	let arg=$i*2;
-	if(("$arg" == "0")); then 
-		arg=1; 
-	fi
-    	./gen_write.exe $arg > defines.h
+    	./gen_write.exe $arg
 	rm -f fitsincache.o fitsincache.exe
    	make >& /dev/null
 	./fitsincache.exe $arg $repeat | tee -a nobarrier.txt

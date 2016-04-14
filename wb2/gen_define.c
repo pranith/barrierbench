@@ -3,8 +3,6 @@
 
 #include "common.h"
 
-#define CACHE_LINE_SIZE 64
-
 int main(int argc, char *argv[])
 {
 	int i = 0, num_misses_per_iter = NUM_MISSES_PER_ITER;

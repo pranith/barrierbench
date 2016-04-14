@@ -40,7 +40,7 @@ int main(int argc, char* argv[])
   int num_req = 0;
   int mem_region_size = NUM_ACCESSES_PER_ITER * CACHE_LINE_SIZE * 2;
   int iter_offset = mem_region_size / sizeof(long);
-  int max_repeat = 1;
+  int max_repeat = 3;
 
   if (argc > 1)
 	  num_req = atoi(argv[1]);
@@ -50,23 +50,27 @@ int main(int argc, char* argv[])
 
   unsigned long repeat, num_iter = NUM_ITER;
   struct timespec before, after;
+  unsigned long tot_time = 0;
 
   printf("%lu,%d,", num_iter * num_req,num_req);
   for (repeat = 0; repeat < max_repeat; repeat++) {
-	  start_watch(&before);
+	  tot_time = 0;
 	  for(j = 0; j < num_iter; j++)
 	  {
+
+		  #include "flush.h"
+		  start_watch(&before);
 		  #include "defines.h"
-		  // flush write buffer
-		  barrier();
+		  //barrier();
+		  stop_watch(&after);
+		  tot_time += get_timer_diff(&before, &after);
 
 		  i += iter_offset;
 
 		  if (i + iter_offset > max_index)
 			  i = 0;
 	  }
-	  stop_watch(&after);
-	  printf("%ld,", get_timer_diff(&before, &after));
+	  printf("%ld,", tot_time);
   }
   printf("\n");
 

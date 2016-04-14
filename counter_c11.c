@@ -11,10 +11,13 @@ unsigned long iter = 100000000;
 void run_counter()
 {
 	for (unsigned long i = 0; i < iter; i++) {
-		unsigned long temp;
-		__atomic_load(&counter, &temp, __ATOMIC_RELAXED);
-		temp = temp+1;
-		__atomic_store(&counter, &temp, __ATOMIC_RELAXED);
+		unsigned long temp1, temp2;
+		__atomic_load(&counter, &temp2, __ATOMIC_ACQUIRE);
+		__atomic_load(&counter, &temp1, __ATOMIC_ACQUIRE);
+		temp1 = temp1+1;
+		temp2 = temp2+1;
+		__atomic_store(&counter, &temp2, __ATOMIC_RELEASE);
+		__atomic_store(&counter, &temp1, __ATOMIC_RELEASE);
 	}
 }
 
