@@ -23,6 +23,7 @@ int main(int argc, char *argv[])
 
 	int period = TOT_REQ / num_req;
 	int offset = cache_size / (num_req * sizeof(long));
+  printf("offset is %d\n", offset);
 
 	int ind = 0, max;
 	for (j = 0; j < period; j++)

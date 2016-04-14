@@ -28,16 +28,13 @@ int main(int argc, char *argv[])
 {
 	int i = 0, num_misses_per_iter = NUM_MISSES_PER_ITER;
 	int cache_size = MB(MEM_SIZE);
-	int num_cache_lines = cache_size / CACHE_LINE_SIZE;
-	int max_index = cache_size / sizeof(long);
 	unsigned long j = 0;
 	int *indexarr = (int *)malloc(sizeof(int) * NUM_ACCESSES_PER_ITER);
 	int *randindices = (int *)malloc(sizeof(int) * NUM_ACCESSES_PER_ITER);
 
-	FILE *defines, *flush;
+	FILE *defines;
 
 	defines = fopen("defines.h", "w");
-	flush = fopen("flush.h", "w");
 	if (argc > 1)
 		num_misses_per_iter = atoi(argv[1]);
 
@@ -48,23 +45,19 @@ int main(int argc, char *argv[])
 	int period = NUM_ACCESSES_PER_ITER / num_misses_per_iter;
 
 	// increment index by offset for every 'period' accesses
-	int offset = 2 * CACHE_LINE_SIZE / sizeof(long); //cache_size / (num_misses_per_iter * sizeof(long));
-	int max_offset = NUM_ACCESSES_PER_ITER * 2 * CACHE_LINE_SIZE / sizeof(long);
+	int offset = cache_size / (num_misses_per_iter * sizeof(long));
+	int max_index = cache_size / sizeof(long);
 
 	int ind = 0, max;
-	for (j = 0; j < NUM_ACCESSES_PER_ITER; j++)
+	for (j = 0; j < period; j++)
 	{
-		//indexarr[j] = /*(num_misses_per_iter * j) / 50 +*/ (num_misses_per_iter * j * offset) / num_misses_per_iter;
-		indexarr[j] = ind;
-		i++;
-		if (i >= period)
-		{
-			i = 0;
-			ind += offset;
-			if (ind >= max_offset) {
-				ind = 0;
-				max = ind - offset;
-			}
+		for (int k = 0; k < num_misses_per_iter; k++) {
+			indexarr[j+k*period] = ind;
+		}
+		ind += offset;
+		if (ind >= max_index) {
+			max = ind - offset;
+			ind = 0;
 		}
 	}
 
@@ -72,17 +65,16 @@ int main(int argc, char *argv[])
 	generate_randindices(randindices);
 
 	for (i = 0; i < NUM_ACCESSES_PER_ITER; i++) {
-		//fprintf(defines, "flush(src+i+%d);\n", indexarr[randindices[i]]);
-		fprintf(defines, "src[i + %d] = dest;\n", indexarr[randindices[i]]);
-		fprintf(defines, "barrier();\n", indexarr[randindices[i]]);
 		fprintf(defines, "flush(src+i+%d);\n", indexarr[randindices[i]]);
+		fprintf(defines, "src[i + %d] = dest;\n", indexarr[randindices[i]]);
+		fprintf(defines, "barrier();\n");
+		//fprintf(defines, "flush(src+i+%d);\n", indexarr[randindices[i]]);
 		fprintf(defines, "myprintf\(\"Accessing %%lu\\n\", i + %d);\n", indexarr[randindices[i]]); 
 	}
 	//fprintf(defines, "barrier();\n");
 	fprintf(defines, "#define indexarr%d %d\n", NUM_ACCESSES_PER_ITER - 1, max);
 
 	fclose(defines);
-	fclose(flush);
 
 	return 0;
 }
