@@ -34,7 +34,7 @@ static inline void flush(void *addr)
 
 static inline void flush(void *addr)
 {
-  asm volatile("dc cvac, (%0)" :: "r"(addr));
+  asm volatile("dc cvac, %0" :: "r"(addr));
 }
 
 #define read_barrier() \
