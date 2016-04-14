@@ -11,7 +11,7 @@
 #define REPEAT 1
 #else
 #define myprintf(...) 
-#define NUM_ITER 10000
+#define NUM_ITER 1000
 #define REPEAT 3
 #endif
 
