@@ -26,7 +26,7 @@ void generate_randindices(int *randindices)
 
 int main(int argc, char *argv[])
 {
-	int i = 0, num_misses_per_iter = NUM_MISSES_PER_ITER;
+	int i = 0, num_misses_per_iter = NUM_ACCESSES_PER_ITER;
 	int cache_size = MB(MEM_SIZE);
 	unsigned long j = 0;
 	int *indexarr = (int *)malloc(sizeof(int) * NUM_ACCESSES_PER_ITER);
@@ -43,9 +43,13 @@ int main(int argc, char *argv[])
 
 	// increment index after every 'period' accesses
 	int period = NUM_ACCESSES_PER_ITER / num_misses_per_iter;
+  if (period * num_misses_per_iter < NUM_ACCESSES_PER_ITER)
+    period++;
 
 	// increment index by offset for every 'period' accesses
 	int offset = cache_size / (num_misses_per_iter * sizeof(long));
+  if (offset * num_misses_per_iter * sizeof(long) < cache_size)
+    offset++;
 	int max_index = cache_size / sizeof(long);
 
 	int ind = 0, max;
@@ -67,14 +71,14 @@ int main(int argc, char *argv[])
 	for (i = 0; i < NUM_ACCESSES_PER_ITER; i++) {
 		fprintf(defines, "flush(src+i+%d);\n", indexarr[randindices[i]]);
 		fprintf(defines, "src[i + %d] = dest;\n", indexarr[randindices[i]]);
-		fprintf(defines, "barrier();\n");
+		//fprintf(defines, "barrier();\n");
 		//fprintf(defines, "flush(src+i+%d);\n", indexarr[randindices[i]]);
 		fprintf(defines, "myprintf\(\"Accessing %%lu\\n\", i + %d);\n", indexarr[randindices[i]]); 
 	}
 	//fprintf(defines, "barrier();\n");
 	fprintf(defines, "#define indexarr%d %d\n", NUM_ACCESSES_PER_ITER - 1, max);
 
-	fclose(defines);
+	//fclose(defines);
 
 	return 0;
 }

@@ -81,12 +81,12 @@ int main(int argc, char* argv[])
 		  //start_watch(&before);
 		  #include "defines.h"
 		  // flush write buffer
-		  barrier();
+		  //barrier();
 		  //stop_watch(&after);
 
 		  i += 8 + dest;
 
-		  if (i + indexarr63 >= size)
+		  if (i + indexarr99 >= size)
 			  i = 0;
 
 		  //timer += get_timer_diff(&before, &after);
