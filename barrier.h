@@ -30,6 +30,11 @@ static inline void flush(void *addr)
   asm volatile("clflush  (%0)" :: "r"(addr));
 }
 
+static inline void xchg(long *ptr, long dst)
+{
+  asm volatile("xchg %0, %1" : "+r"(dst), "+m"(*ptr):: "memory", "cc");
+}
+
 #elif defined(__arm__) || defined(__aarch64__)
 
 static inline void flush(void *addr)
