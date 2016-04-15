@@ -4,7 +4,7 @@ endif
 
 IDIR = ../include
 CC = gcc
-CPPFLAGS = -ggdb -O0 -Wall $(DEBUG) -I$(IDIR) -std=gnu11 -funroll-loops
+CPPFLAGS = -ggdb -Wall $(DEBUG) -I$(IDIR) -std=gnu11 -funroll-loops
 
 EXEC = gen_lfence.exe gen_define.exe fitsincache.exe
 
