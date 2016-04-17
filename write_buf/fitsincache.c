@@ -11,7 +11,7 @@
 #define REPEAT 1
 #else
 #define myprintf(...) 
-#define NUM_ITER 100000
+#define NUM_ITER 1000000
 #define REPEAT 1
 #endif
 
@@ -35,7 +35,7 @@ void warmup(int val)
 {
   unsigned long j, i;
 
-  size = MB(64) / sizeof(long);
+  size = MB(MEM_SIZE) / sizeof(long);
   if (!src)
 	  src = (long *)malloc(sizeof(long) * size);
 
@@ -51,7 +51,7 @@ void warmup(int val)
 
 void flush_cache(void)
 {
-  size = MB(64) / sizeof(long);
+  size = MB(MEM_SIZE) / sizeof(long);
   int offset = CACHE_LINE_SIZE / sizeof(long);
   for (int j = 0; j < size; j+=offset)
     flush(src+j);
@@ -65,7 +65,7 @@ int main(int argc, char* argv[])
   volatile long dest = 0;
   int num_req = 0;
 
-  src = (long *)malloc(MB(64));
+  src = (long *)malloc(MB(MEM_SIZE));
   if (argc > 1)
 	  num_req = atoi(argv[1]);
 
