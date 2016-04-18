@@ -1,7 +1,23 @@
 #!/usr/bin/python3
 
+import os;
 import sys;
 import re;
+import matplotlib.pyplot as plt;
+import numpy as np;
+import itertools;
+
+result_names = list();
+accesses_cycles = list();
+accesses_ipc = list();
+tmp_cycles = list();
+tmp_ipc = list();
+markers = ('^', '+', 'v', 'o', '*');
+
+def clean_num(number):
+    number = re.sub(r',',"", number); # remove comma
+    number = re.sub(r' ',"", number); # remove whitespace
+    return number;
 
 def parse_section(filehandle):
     i = 0;
@@ -10,31 +26,28 @@ def parse_section(filehandle):
         if (i == 2):
             #print("%s" % line, end=" ");
             num_accesses = re.search(r'./fitsincache.exe (.*?)\'', line).group(1);
-            num_accesses = re.sub(r' ',"", num_accesses); # remove whitespace
+            num_accesses = clean_num(num_accesses);
         if (i == 4):
             num_cycles = re.search(r'(.*?) cycles', line).group(1);
-            num_cycles = re.sub(r',',"", num_cycles); # remove comma
-            num_cycles = re.sub(r' ',"", num_cycles); # remove whitespace
+            num_cycles = clean_num(num_cycles);
         if (i == 5):
             num_inst = re.search(r'(.*?) instructions', line).group(1);
-            num_inst = re.sub(r',',"", num_inst); # remove comma
-            num_inst = re.sub(r' ',"", num_inst); # remove whitespace
+            num_inst = clean_num(num_inst);
         if (i == 6):
             num_cache_ref = re.search(r'(.*?) cache-references', line).group(1);
-            num_cache_ref = re.sub(r',',"", num_cache_ref); # remove comma
-            num_cache_ref = re.sub(r' ',"", num_cache_ref); # remove whitespace
+            num_cache_ref = clean_num(num_cache_ref);
         if (i == 7):
             num_cache_miss = re.search(r'(.*?) cache-misses', line).group(1);
-            num_cache_miss = re.sub(r',',"", num_cache_miss); # remove comma
-            num_cache_miss = re.sub(r' ',"", num_cache_miss); # remove whitespace
+            num_cache_miss = clean_num(num_cache_miss);
         if (i == 9):
             num_seconds = re.search(r'(.*?) seconds', line).group(1);
-            num_seconds = re.sub(r',',"", num_seconds); # remove comma
-            num_seconds = re.sub(r' ',"", num_seconds); # remove whitespace
+            num_seconds = clean_num(num_seconds);
             
         i = i+1;
         if (i == 11):
-            print(num_accesses, num_cycles, num_inst, num_cache_ref, num_cache_miss, num_seconds);
+            tmp_cycles.append(num_cycles);
+            tmp_ipc.append(float(num_inst)/float(num_cycles));
+            #print(num_accesses, num_cycles, num_inst, num_cache_ref, num_cache_miss, num_seconds);
             return True;
 
     return False;
@@ -49,8 +62,47 @@ def main():
         print("Missing input data file");
         return;
 
-    datafile = str(sys.argv[1]);
-    parse_data(datafile);
+    num_files = len(sys.argv);
+
+    index = 1;
+    while (index < num_files):
+        datafile = str(sys.argv[index]);
+        parse_data(datafile);
+        accesses_cycles.append(list(tmp_cycles));
+        del tmp_cycles[:];
+        accesses_ipc.append(list(tmp_ipc));
+        del tmp_ipc[:];
+        result_names.append(os.path.splitext(datafile)[0]);
+        index += 1;
+
+    x = np.arange(1, 1+len(accesses_cycles[0]));
+    # plot cycles
+    index = 0;
+    cycles_fig = plt.figure(1);
+    plt.xlabel("Misses Per Iteration");
+    plt.ylabel("Cycles");
+    imarker = itertools.cycle(markers);
+    while (index < num_files - 1):
+        plt.plot(x, accesses_cycles[index], label=result_names[index], marker =
+                next(itertools.cycle(imarker)));
+        index += 1;
+
+    plt.legend(loc="upper right");
+
+    # plot ipc
+    index = 0;
+    ipc_fig = plt.figure(2);
+    plt.xlabel("Misses Per Iteration");
+    plt.ylabel("IPC");
+    imarker = itertools.cycle(markers);
+    while (index < num_files - 1):
+        plt.plot(x, accesses_ipc[index], label=result_names[index], marker =
+                next(itertools.cycle(imarker)));
+        index += 1;
+
+    plt.legend(loc="upper right");
+    plt.show();
+
     return;
 
 if __name__ == "__main__":
