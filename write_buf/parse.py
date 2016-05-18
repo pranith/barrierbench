@@ -79,12 +79,19 @@ def main():
     # plot cycles
     index = 0;
     cycles_fig = plt.figure(1);
-    plt.xlabel("Misses Per Iteration");
+    plt.xlabel("Cache Misses Per Iteration");
     plt.ylabel("Cycles");
     imarker = itertools.cycle(markers);
+
+    res_csv = dict();
+    for i in range(0,len(accesses_ipc[0])):
+        res_csv[i] = list();
+
     while (index < num_files - 1):
         plt.plot(x, accesses_cycles[index], label=result_names[index], marker =
                 next(itertools.cycle(imarker)));
+        for i in range(0, len(accesses_ipc[0])):
+            res_csv[i].append(accesses_ipc[index][i]);
         index += 1;
 
     plt.legend(loc="upper right");
@@ -92,7 +99,7 @@ def main():
     # plot ipc
     index = 0;
     ipc_fig = plt.figure(2);
-    plt.xlabel("Misses Per Iteration");
+    plt.xlabel("Cache Misses Per Iteration");
     plt.ylabel("IPC");
     imarker = itertools.cycle(markers);
     while (index < num_files - 1):
@@ -102,6 +109,14 @@ def main():
 
     plt.legend(loc="upper right");
     plt.show();
+
+    # write parsed results to file
+    res_file = open("result.csv", 'w');
+    for i in range(0, len(accesses_ipc[0])):
+        res_file.write(str(i) + ",");
+        for j in range(0, len(res_csv[i])):
+            res_file.write(str(res_csv[i][j]) + ",");
+        res_file.write("\n");
 
     return;
 
