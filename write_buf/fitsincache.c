@@ -37,14 +37,17 @@ void warmup(int val)
 
   size = MB(MEM_SIZE) / sizeof(long);
   if (!src)
-	  src = (long *)malloc(sizeof(long) * size);
+    src = (long *)malloc(sizeof(long) * size);
 
   src1 = (long *)malloc(sizeof(long) * size);
 
   //initialize array
-  for (i = 0; i < 5; i++)
-  for (j = 0; j < size; j++)
-    src1[j] = 8 * val;
+  for (i = 0; i < 5; i++) {
+    for (j = 0; j < size; j++) {
+      src1[j] = 8 * val;
+      src[j]  = 8;
+    }
+  }
 
   free(src1);
 }
@@ -62,7 +65,7 @@ int main(int argc, char* argv[])
 {
   //warmup(0);
   unsigned long j, i = 0;
-  volatile long dest = 0;
+  volatile long dest = 32;
   int num_req = 0;
 
   src = (long *)malloc(MB(MEM_SIZE));
@@ -72,29 +75,19 @@ int main(int argc, char* argv[])
   struct timespec before, after;
   unsigned long timer = 0;
 
-  //printf("%lu, ", num_iter * num_req * 5);
-
   for (int repeat = 0; repeat < REPEAT; repeat++) {
-	  flush_cache();
-	  for(j = 0; j < NUM_ITER; j++)
-	  {
-		  //start_watch(&before);
-		  #include "defines.h"
-		  // flush write buffer
-		  //barrier();
-		  //stop_watch(&after);
+    flush_cache();
+    for(j = 0; j < NUM_ITER; j++)
+    {
+      #include "defines.h"
+      // flush write buffer
+      barrier();
 
-		  i += 8 + dest;
+      i += 8 + src[indexarr39 + i];
 
-		  if (i + indexarr99 >= size)
-			  i = 0;
-
-		  //timer += get_timer_diff(&before, &after);
-	  }
-
-    //printf("%d, %ld\n", num_req, timer);
-    //timer = 0;
-    //warmup(repeat);
+      if (i + indexarr39 >= size)
+	i = 0;
+    }
   }
 
 

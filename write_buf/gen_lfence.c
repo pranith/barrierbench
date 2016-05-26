@@ -81,10 +81,7 @@ int main(int argc, char *argv[])
 		//fprintf(defines, "flush(src+i+%d);\n", indexarr[randindices[i]]);
 		//fprintf(defines, "myprintf\(\"Accessing %%lu\\n\", i + %d);\n", indexarr[randindices[i]]); 
 	}
-	//fprintf(defines, "barrier();\n");
 	fprintf(defines, "#define indexarr%d %d\n", NUM_ACCESSES_PER_ITER - 1, max);
-
-	//fclose(defines);
 
 	return 0;
 }
