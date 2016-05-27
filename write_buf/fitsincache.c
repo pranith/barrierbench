@@ -11,8 +11,8 @@
 #define REPEAT 1
 #else
 #define myprintf(...) 
-#define NUM_ITER 1000000
-#define REPEAT 1
+#define NUM_ITER 100000 
+#define REPEAT 10
 #endif
 
 #include <stdio.h>
@@ -20,10 +20,9 @@
 
 #define USE_BARRIER 1
 #include "../barrier.h"
-#include "../timer.h"
 #include "common.h"
 
-long *src, *src1;
+volatile long *src, *src1;
 long result;
 unsigned long size;
 //unsigned long repeat, num_iter = NUM_ITER; //5000000016 / num_mem_ops;
@@ -64,7 +63,6 @@ void flush_cache(void)
 int main(int argc, char* argv[])
 {
   //warmup(0);
-  unsigned long j, i = 0;
   volatile long dest = 32;
   int num_req = 0;
 
@@ -75,21 +73,24 @@ int main(int argc, char* argv[])
   struct timespec before, after;
   unsigned long timer = 0;
 
+  flush_cache();
   for (int repeat = 0; repeat < REPEAT; repeat++) {
-    flush_cache();
+    unsigned long j, i = 0, i_start = 0;
     for(j = 0; j < NUM_ITER; j++)
     {
       #include "defines.h"
       // flush write buffer
-      barrier();
+      // barrier();
 
-      i += 8 + src[indexarr39 + i];
+      i += 8 + src[indexarr35 + i];
 
-      if (i + indexarr39 >= size)
-	i = 0;
+      if (i + indexarr35 >= size) {
+	      myprintf("Resetting...\n");
+	i_start += 8;
+	i = i_start;
+      }
     }
   }
-
 
   fflush(NULL);
   return 0;

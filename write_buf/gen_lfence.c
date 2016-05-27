@@ -52,7 +52,9 @@ int main(int argc, char *argv[])
 		offset++;
 
 	int max_index = cache_size / sizeof(long);
-	printf("Offset is %d, period is %d, max_idx %d\n", offset, period, max_index);
+	printf("Offset is %d, period is %d, max_idx %d, cache lines \
+	%d, cache lines per period %d\n", offset, period, max_index,
+	cache_size/CACHE_LINE_SIZE, offset/CACHE_LINE_SIZE);
 
 	int ind = 0, max = 0;
 	for (j = 0; j < num_misses_per_iter; j++)
@@ -76,6 +78,7 @@ int main(int argc, char *argv[])
 		//printf("src[i + %d] = dest;\n", indexarr[i]);
 		//fprintf(defines, "flush(src+i+%d);\n", indexarr[randindices[i]]);
 		fprintf(defines, "src[i + %d] = dest;\n", indexarr[randindices[i]]);
+		//fprintf(defines, "printf(\"%%lu\\n\", (src - src + i + %d) << 6);\n",indexarr[randindices[i]]);
 		//fprintf(defines, "barrier();\n");
 		//fprintf(defines, "xchg(src+i+%d, dest);\n", indexarr[randindices[i]]);
 		//fprintf(defines, "flush(src+i+%d);\n", indexarr[randindices[i]]);
