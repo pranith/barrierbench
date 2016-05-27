@@ -11,7 +11,7 @@
 #define REPEAT 1
 #else
 #define myprintf(...) 
-#define NUM_ITER 100000 
+#define NUM_ITER 1000000 
 #define REPEAT 10
 #endif
 
@@ -86,10 +86,11 @@ int main(int argc, char* argv[])
 
       if (i + indexarr35 >= size) {
 	      myprintf("Resetting...\n");
-	i_start += 8;
-	i = i_start;
+	      i_start += 8;
+        i = i_start;
       }
     }
+    //flush_cache();
   }
 
   fflush(NULL);

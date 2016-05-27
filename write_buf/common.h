@@ -2,6 +2,6 @@
 #define MB(x) ((x) << 20)
 
 #define NUM_ACCESSES_PER_ITER 36
-#define MEM_SIZE 32
+#define MEM_SIZE 128
 #define CACHE_LINE_SIZE 64
 
