@@ -82,9 +82,9 @@ int main(int argc, char* argv[])
       // flush write buffer
       // barrier();
 
-      i += 8 + src[indexarr35 + i];
+      i += 8 + src[indexarr63 + i];
 
-      if (i + indexarr35 >= size) {
+      if (i + indexarr63 >= size) {
 	      myprintf("Resetting...\n");
 	      i_start += 8;
         i = i_start;

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-for arg in {1..36}
+for arg in {1..42}
 do
 	./run_cache_once.sh $arg
 done
